@@ -21,6 +21,11 @@ export type MyDirectoryTree = {
     name?: string
     type: 'directory' | 'file'
     children?: MyDirectoryTree[]
+    contributorsDetails?: Array <{
+        percentage: number
+        author: string
+        accumulatedLinesCount: number
+    }>
     topContributorDetails?: {
         percentage: number
         author: string
@@ -33,11 +38,23 @@ const CONCURRENT_IO_LIMIT = os.cpus().length * 4
 function getTreeLayersLeafFirst(tree: MyDirectoryTree) {
     const nodes: Array<MyDirectoryTree> = bfs(tree)
     const layers = groupBy(nodes, (x) => x.depth)
+    // Object.keys(layers).forEach(key => {
+    //     let value = layers[key];
+    //     console.log('layers');
+    //     console.log(key, value);
+    // });
+
     const groups = Object.keys(layers)
         .map(Number)
         .sort((a, b) => a - b)
         .map((k) => layers[String(k)])
         .reverse()
+
+    // Object.keys(groups).forEach(key => {
+    //     let value = groups[key];
+    //     console.log('groups1');
+    //     console.log(key, value);
+    // });
     return groups
 }
 
@@ -93,10 +110,24 @@ const addContributorDetailsToNode = async (node: MyDirectoryTree) => {
     const isDir = node.type === 'directory'
     const filePath = node.path
     if (isDir && node?.children?.length) {
+
+        // node.children.forEach(x => {
+        //     console.log('node children -----');
+        //     console.log(x.topContributorDetails.author);
+        // });
+
+        //All top contributors of nested files/directories
         const groups = groupBy(
             node.children || [],
             (x) => x.topContributorDetails.author,
         )
+
+        // Object.keys(groups).forEach(key => {
+        //     let value = groups[key];
+        //     console.log('groups2');
+        //     console.log(key, value);
+        // });
+
         const totalLines = node.children
             .map((x) => x.topContributorDetails.accumulatedLinesCount)
             .reduce(sum, 0)
@@ -126,9 +157,13 @@ const addContributorDetailsToNode = async (node: MyDirectoryTree) => {
         }
         return
     }
+
+    //If its a file -bottom of recursion
     const authors = await getFileOwners({
         filePath,
     })
+
+    //If there are no authors
     if (!authors?.length) {
         node.topContributorDetails = {
             percentage: 0,
@@ -137,6 +172,7 @@ const addContributorDetailsToNode = async (node: MyDirectoryTree) => {
         }
         return
     }
+
     const hist = makeHist(authors)
     const contributorsDetails = Object.keys(hist).map((author) => {
         const lines = hist[author]
@@ -147,10 +183,22 @@ const addContributorDetailsToNode = async (node: MyDirectoryTree) => {
         }
     })
 
+
+    // contributorsDetails.forEach(x => {
+    //     console.log('node children -----');
+    //     contributorsDetails.forEach(detail => {
+    //         console.log(detail.author);
+    //         console.log(detail.accumulatedLinesCount);
+    //         console.log(detail.percentage);
+    //
+    //     })
+    // });
+
     node.topContributorDetails = arrayMax(
         contributorsDetails,
         (x) => x.percentage,
     )
+    node.contributorsDetails = contributorsDetails
 }
 
 export async function getGitIgnoreRegexes() {

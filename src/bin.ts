@@ -3,11 +3,13 @@ import yargs from 'yargs'
 import { printTree, makeTreeWithInfo } from './'
 
 const argv = yargs
+    .option('repopath', {type: 'string' })
     .option('cwd', { type: 'string', default: process.cwd() })
     .option('exclude', { type: 'string', array: true, alias: 'e' })
     .option('alignLeft', { type: 'boolean' })
     .option('maxDepth', { type: 'number', default: 4, alias: 'd' })
     .option('printOnlyOwner', { type: 'boolean' })
+    .option('printAllContr', { type: 'boolean' })
     .option('verbose', { alias: 'v', type: 'boolean' })
     .help('help')
     .help('h').argv
@@ -24,6 +26,7 @@ async function main() {
         printTree(tree, {
             maxDepth: argv.maxDepth,
             alignRight: !argv.alignLeft,
+            printAllContr: argv.printAllContr,
         }),
     )
 }

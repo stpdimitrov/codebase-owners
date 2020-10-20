@@ -76,17 +76,34 @@ function print(
 
     line.push(
         ' ' +
-            meaningfulColor(
-                node.topContributorDetails.accumulatedLinesCount /
-                    node.topContributorDetails.percentage,
-            ),
+        meaningfulColor(
+            node.topContributorDetails.accumulatedLinesCount /
+            node.topContributorDetails.percentage,
+        ),
     )
 
-    const postfix = ` ${color(('   ' + percentage).slice(-4))} ${author}`
+
+    const postfix = `Owner | ${color(('  ' + percentage).slice(-4))} ${author}` + '|'
 
     line.push(options.alignRight ? alignRight(line.join(''), postfix) : postfix)
 
+    if(options.printAllContr){
+            line.push('All Contributors')
+            if(node.contributorsDetails && node.contributorsDetails.length) {
+            node.contributorsDetails.forEach(
+                contributor => {
+                    let contributorPercentage = (contributor.percentage * 100).toFixed(0) + '%'
+
+                    let contributorPostfix = ` ${color(('   ' + contributorPercentage).slice(-4))} ${contributor.author}`
+
+                    line.push(options.alignRight ? alignRight(line.join(''), contributorPostfix) : contributorPostfix)
+                })
+        }
+    }
+
     lines.push(line.join(''))
+
+
 
     if (isFile) {
         return lines
@@ -150,6 +167,7 @@ export type TreeOptions = {
     dirsOnly?: boolean
     exclude?: RegExp[] // | ((x?: string) => boolean)
     maxDepth?: number
+    printAllContr?: boolean
     reverse?: boolean
     trailingSlash?: boolean
     alignRight?: boolean
