@@ -155,9 +155,9 @@ const addContributorDetailsToNode = async (node: MyDirectoryTree) => {
             percentage,
             accumulatedLinesCount: lines,
         }
-        console.log('the trught !!!!!')
-        console.log(node.path)
-        console.log(node.contributorsDetails)
+        // console.log('the trught !!!!!')
+        // console.log(node.path)
+        // console.log(node.contributorsDetails)
 
         return
     }

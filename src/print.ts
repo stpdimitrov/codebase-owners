@@ -75,7 +75,7 @@ function print(
     }
 
     line.push(
-        //node.type + '(the type)' +
+        ' ' + node.type + '(the type)' +
         ' ' +
         meaningfulColor(
             node.topContributorDetails.accumulatedLinesCount /

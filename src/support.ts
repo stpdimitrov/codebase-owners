@@ -199,33 +199,18 @@ export function arrangeIntoTree(paths: string[][]): MyDirectoryTree[] {
         var path = paths[i]
         var currentLevel = tree
         for (var j = 0; j < path.length; j++) {
-            var part = path[j]
 
+            var part = path[j]
             var existingPath = findWhere(currentLevel, 'name', part)
 
             if (existingPath) {
-                // console.log('---ifa-')
-                // currentLevel.forEach(x => {
-                //     console.log('currentLevel -----');
-                //
-                //         console.log(x);
-                //
-                // });
-                // existingPath.children.forEach(x => {
-                //     console.log('existingPath children -----');
-                //
-                //         console.log(x);
-                //
-                // });
                 currentLevel = existingPath.children
             } else {
                 const reconstructedPath = path.slice(0, j + 1).join('/')
                 // remove url for non leafs
-                // console.log('---elsa-' + (part[j + 1] ? 'directory' : 'file' + '  print part ' ))
-                // console.log('  print part ' + part)
                 var newPart: MyDirectoryTree = {
                     name: part,
-                    type: part[j + 1] ? 'directory' : 'file',
+                    type: path[j + 1] ? 'directory' : 'file',
                     path: reconstructedPath,
                     children: [],
                 }
@@ -235,7 +220,6 @@ export function arrangeIntoTree(paths: string[][]): MyDirectoryTree[] {
             }
         }
     }
-
     return tree
 
     function findWhere(array, key, value) {
