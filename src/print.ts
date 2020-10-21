@@ -75,6 +75,7 @@ function print(
     }
 
     line.push(
+        //node.type + '(the type)' +
         ' ' +
         meaningfulColor(
             node.topContributorDetails.accumulatedLinesCount /
@@ -87,10 +88,10 @@ function print(
 
     line.push(options.alignRight ? alignRight(line.join(''), postfix) : postfix)
 
-    if(options.printAllContr){
-            line.push('All Contributors')
+    if(!options.printAllContr){
             if(node.contributorsDetails && node.contributorsDetails.length) {
-            node.contributorsDetails.forEach(
+                line.push('     All Contributors -')
+                node.contributorsDetails.forEach(
                 contributor => {
                     let contributorPercentage = (contributor.percentage * 100).toFixed(0) + '%'
 
